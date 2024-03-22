@@ -10,6 +10,7 @@ import {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(
   Strategy,
+  'jwt',
 ) {
   constructor(config: ConfigService) {
     super({
@@ -20,7 +21,12 @@ export class JwtStrategy extends PassportStrategy(
     });
   }
   async validate(payload: any) {
-    const user = await validate(payload);
+    const { email } = payload;
+    const user = { email };
+    const errors = await validate(user);
+    if (errors.length) {
+      throw new Error('Validation failed');
+    }
     return user;
   }
 }
