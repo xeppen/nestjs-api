@@ -20,13 +20,7 @@ export class JwtStrategy extends PassportStrategy(
       secretOrKey: config.get('JWT_SECRET'),
     });
   }
-  async validate(payload: any) {
-    const { email } = payload;
-    const user = { email };
-    const errors = await validate(user);
-    if (errors.length) {
-      throw new Error('Validation failed');
-    }
-    return user;
+  validate(payload: any) {
+    return payload;
   }
 }
