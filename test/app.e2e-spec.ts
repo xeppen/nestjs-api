@@ -43,6 +43,33 @@ describe('App e2e', () => {
       password: '123456',
     };
     describe('Signup', () => {
+      it('should throw if email empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/signup')
+          .withBody({
+            password: dto.password,
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw if password empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/signup')
+          .withBody({
+            email: dto.email,
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw if no body', () => {
+        return pactum
+          .spec()
+          .post('/auth/signup')
+          .expectStatus(400);
+      });
+
       it('Should create user', () => {
         return pactum
           .spec()
@@ -50,20 +77,59 @@ describe('App e2e', () => {
           .withBody(dto)
           .expectStatus(201);
       });
+    });
 
-      describe('Login', () => {
-        it('Should login', () => {
-          return pactum
-            .spec()
-            .post('/auth/login')
-            .withBody(dto)
-            .expectStatus(200);
-        });
+    describe('Login', () => {
+      let accessToken: string;
+      it('Should login', () => {
+        return pactum
+          .spec()
+          .post('/auth/login')
+          .withBody(dto)
+          .expectStatus(200)
+          .stores('userAt', 'access_token');
+      });
+
+      it('should throw if email empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/login')
+          .withBody({
+            password: dto.password,
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw if password empty', () => {
+        return pactum
+          .spec()
+          .post('/auth/login')
+          .withBody({
+            email: dto.email,
+          })
+          .expectStatus(400);
+      });
+
+      it('should throw if no body', () => {
+        return pactum
+          .spec()
+          .post('/auth/login')
+          .expectStatus(400);
       });
     });
 
     describe('User', () => {
-      describe('Get me', () => {});
+      describe('Get me', () => {
+        it('should get current user', () => {
+          return pactum
+            .spec()
+            .get('/users/me')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}',
+            })
+            .expectStatus(200);
+        });
+      });
 
       describe('Edit user', () => {});
     });
