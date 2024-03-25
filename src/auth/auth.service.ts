@@ -3,13 +3,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { User, Bookmark } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
-import { sign } from 'crypto';
-import { config } from 'process';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

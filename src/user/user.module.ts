@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
-import { JwtStrategy } from 'src/auth/strategy';
+import { JwtStrategy } from '../auth/strategy';
 
 @Module({
   controllers: [UserController],
