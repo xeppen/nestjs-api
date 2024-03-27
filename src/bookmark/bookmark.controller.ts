@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -12,6 +13,10 @@ import { Bookmark } from '@prisma/client';
 import { JwtGuard } from '../auth/guard';
 import { BookmarkService } from './bookmark.service';
 import { GetUser } from 'src/auth/decorator';
+import {
+  CreateBookmarkDto,
+  EditBookmarkDto,
+} from './dto';
 
 @UseGuards(JwtGuard)
 @Controller('bookmarks')
@@ -23,14 +28,20 @@ export class BookmarkController {
   getBookmarks(
     @GetUser('id') userId: number,
   ): Bookmark[] {
-    return [];
+    return this.bookmarkService.getBookmarks(
+      userId,
+    );
   }
 
   @Post()
   createBookmark(
     @GetUser('id') userId: number,
+    @Body() dto: CreateBookmarkDto,
   ): Bookmark {
-    return {} as Bookmark;
+    return this.bookmarkService.createBookmark(
+      userId,
+      dto,
+    );
   }
 
   @Get(':id')
@@ -38,20 +49,33 @@ export class BookmarkController {
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
   ): Bookmark {
-    return {} as Bookmark;
+    return this.bookmarkService.getBookmarkById(
+      userId,
+      bookmarkId,
+    );
   }
 
-  @Patch()
+  @Patch(':id')
   editBookmarkById(
     @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) bookmarkId: number,
+    @Body() dto: EditBookmarkDto,
   ): Bookmark {
-    return {} as Bookmark;
+    return this.bookmarkService.editBookmarkById(
+      userId,
+      bookmarkId,
+      dto,
+    );
   }
 
-  @Delete()
+  @Delete(':id')
   deleteBookmarkById(
     @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) bookmarkId: number,
   ): Bookmark {
-    return {} as Bookmark;
+    return this.bookmarkService.deleteBookmarkById(
+      userId,
+      bookmarkId,
+    );
   }
 }
