@@ -3,16 +3,17 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { Bookmark } from '@prisma/client';
+import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import { BookmarkService } from './bookmark.service';
-import { GetUser } from 'src/auth/decorator';
 import {
   CreateBookmarkDto,
   EditBookmarkDto,
@@ -24,23 +25,11 @@ export class BookmarkController {
   constructor(
     private bookmarkService: BookmarkService,
   ) {}
+
   @Get()
-  getBookmarks(
-    @GetUser('id') userId: number,
-  ): Bookmark[] {
+  getBookmarks(@GetUser('id') userId: number) {
     return this.bookmarkService.getBookmarks(
       userId,
-    );
-  }
-
-  @Post()
-  createBookmark(
-    @GetUser('id') userId: number,
-    @Body() dto: CreateBookmarkDto,
-  ): Bookmark {
-    return this.bookmarkService.createBookmark(
-      userId,
-      dto,
     );
   }
 
@@ -48,10 +37,21 @@ export class BookmarkController {
   getBookmarkById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
-  ): Bookmark {
+  ) {
     return this.bookmarkService.getBookmarkById(
       userId,
       bookmarkId,
+    );
+  }
+
+  @Post()
+  createBookmark(
+    @GetUser('id') userId: number,
+    @Body() dto: CreateBookmarkDto,
+  ) {
+    return this.bookmarkService.createBookmark(
+      userId,
+      dto,
     );
   }
 
@@ -60,7 +60,7 @@ export class BookmarkController {
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
     @Body() dto: EditBookmarkDto,
-  ): Bookmark {
+  ) {
     return this.bookmarkService.editBookmarkById(
       userId,
       bookmarkId,
@@ -68,11 +68,12 @@ export class BookmarkController {
     );
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   deleteBookmarkById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) bookmarkId: number,
-  ): Bookmark {
+  ) {
     return this.bookmarkService.deleteBookmarkById(
       userId,
       bookmarkId,
